@@ -137,6 +137,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
     @SuppressWarnings("StringSplitter")
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         final File parent = dependency.getActualFile().getParentFile();
+        final String dependencyFileActualPath = dependency.getActualFilePath();
 
         try {
             //TODO while we are supporting props - we still do not support Directory.Build.targets
@@ -149,13 +150,15 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
             final XPathMSBuildProjectParser parser = new XPathMSBuildProjectParser();
             final List<NugetPackageReference> packages;
 
-            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath());
-                    BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()) {
+            try (
+                FileInputStream fis = new FileInputStream(dependencyFileActualPath);
+                BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()
+            ) {
                 //skip BOM if it exists
                 bis.getBOM();
                 packages = parser.parse(bis, props, centrallyManaged);
             } catch (MSBuildProjectParseException | FileNotFoundException ex) {
-                throw new AnalysisException(ex);
+                throw new AnalysisException("Error analysing " + dependencyFileActualPath, ex);
             }
 
             if (packages == null || packages.isEmpty()) {
@@ -210,7 +213,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
             }
 
         } catch (Throwable e) {
-            throw new AnalysisException(e);
+            throw new AnalysisException("Error analysing " + dependencyFileActualPath, e);
         }
     }
 
