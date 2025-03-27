@@ -150,10 +150,6 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
             final XPathMSBuildProjectParser parser = new XPathMSBuildProjectParser();
             final List<NugetPackageReference> packages;
 
-<<<<<<< HEAD
-=======
-            String dependencyFileActualPath = dependency.getActualFilePath();
->>>>>>> b056e16d84dd77f88f5b6ea999ea57af911195ab
             try (
                 FileInputStream fis = new FileInputStream(dependencyFileActualPath);
                 BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()
