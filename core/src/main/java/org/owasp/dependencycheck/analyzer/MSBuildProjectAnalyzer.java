@@ -149,13 +149,16 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
             final XPathMSBuildProjectParser parser = new XPathMSBuildProjectParser();
             final List<NugetPackageReference> packages;
 
-            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath());
-                    BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()) {
+            String dependencyFileActualPath = dependency.getActualFilePath();
+            try (
+                FileInputStream fis = new FileInputStream(dependencyFileActualPath);
+                BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()
+            ) {
                 //skip BOM if it exists
                 bis.getBOM();
                 packages = parser.parse(bis, props, centrallyManaged);
             } catch (MSBuildProjectParseException | FileNotFoundException ex) {
-                throw new AnalysisException(ex);
+                throw new AnalysisException("Error analysing " + dependencyFileActualPath, ex);
             }
 
             if (packages == null || packages.isEmpty()) {

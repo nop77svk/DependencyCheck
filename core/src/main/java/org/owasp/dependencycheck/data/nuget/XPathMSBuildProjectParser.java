@@ -67,7 +67,7 @@ public class XPathMSBuildProjectParser {
             final NodeList nodeList = (NodeList) xpath.evaluate("//PackageReference", d, XPathConstants.NODESET);
 
             if (nodeList == null) {
-                throw new MSBuildProjectParseException("Unable to parse MSBuild project file");
+                throw new MSBuildProjectParseException("Unable to parse MSBuild project file - no package references found");
             }
 
             for (int i = 0; i < nodeList.getLength(); i++) {
