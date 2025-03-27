@@ -149,6 +149,8 @@ public class PEAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void analyzeDependency(final Dependency dependency, final Engine engine) throws AnalysisException {
+        final String dependencyFileActualPath = dependency.getActualFilePath();
+        
         for (Evidence e : dependency.getEvidence()) {
             if ("grokassembly".equals(e.getSource())) {
                 LOGGER.debug("Skipping {} because it was already analyzed by the Assembly Analyzer", dependency.getFileName());
@@ -272,7 +274,7 @@ public class PEAnalyzer extends AbstractFileTypeAnalyzer {
                 }
             }
         } catch (IOException ex) {
-            throw new AnalysisException(ex);
+            throw new AnalysisException("Error analysing " + dependencyFileActualPath, ex);
         }
     }
 
